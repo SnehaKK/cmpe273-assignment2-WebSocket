@@ -1,0 +1,88 @@
+<html>
+        <head>
+            <title>Home</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <!-- Latest compiled and minified CSS -->
+            <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" media="screen">
+            <!-- Optional theme -->
+            <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css">
+        </head>
+        <body>
+            <div class="container">
+                <div class="jumbotron">
+                    <!-- calls getBooks() from HomeResource -->
+                    <table class="table table-hover">
+                    {{#books}}
+                        <tr>
+                            <td>{{isbn}}</td>
+							<td><img class="img-thumbnail" height="92" width="72" src="{{coverimage}}"></td>
+							<td>{{title}}</td>
+							<td>{{category}}</td>
+							<td>{{status}}</td>
+							<td><td><button id="{{isbn}}" type="button" class="btn btn-primary">Report Lost</button></td></td>
+                        </tr>
+                    {{/books}}
+                    </table>
+                </div>
+            </div> <!-- end of container -->
+              <div class="span4">
+          <div class="page-header">
+            <h2>Debug Log</h2>
+          </div>
+          <pre id="debug"></pre>
+        </div>
+            
+           
+            <!-- script tags -->
+            <script src="../assets/js/stomp.js"></script>
+            <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+            <script src="//code.jquery.com/jquery.js"></script>
+            <!-- Latest compiled and minified JavaScript -->
+            <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+            <!-- application ui scripts -->
+			<script src="../assets/js/app.js"></script>
+			<!-- including stomp.js for websocket implementation -->
+			
+			<script type="text/javascript" >
+			
+			startWebsocket();
+
+function startWebsocket() {
+	if(window.WebSocket) {
+	var client = Stomp.client( "ws://54.215.210.214:61613");
+	 // this allows to display debug logs directly on the web page
+          client.debug = function(str) {
+            $("#debug").append(str + "\n");
+          };
+	
+    var topic;
+	if(window.location.port == 8001) {
+	    
+		topic = "/topic/11536.book.*";
+	} else {
+		
+		topic = "/topic/11536.book.computer";
+	}
+	alert("topic: " + topic);
+
+	client.connect( "admin", "password",
+			  function(frame) {
+			  
+			  client.debug("connected to Stomp");
+			      client.subscribe(topic,
+			       function( message ) {
+			           alert( message );
+			          }
+			      );
+			  }
+			 );
+			 }else {
+			 alert("websocket not supported");
+			 }
+	
+}
+			
+			</script>
+			
+        </body>
+</html>
